@@ -1,11 +1,13 @@
 package com.example.jackson2
 
 import com.example.core.Data
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 fun main(args: Array<String>) {
   val mapper = JsonMapper.builder()
+    .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     .addModule(KotlinModule.Builder().build())
     .build()
 
