@@ -1,0 +1,74 @@
+Subject: [PATCH] Don't require restclient and webclient on a classpath
+---
+Index: spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringBootAdminClientAutoConfiguration.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringBootAdminClientAutoConfiguration.java b/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringBootAdminClientAutoConfiguration.java
+--- a/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringBootAdminClientAutoConfiguration.java	(revision 40b5e022e464b2ba971fbed321ff1d9b87b3ca0e)
++++ b/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringBootAdminClientAutoConfiguration.java	(revision 6baeab628d79aa939cc5c6a4e0950a6a9334b5e3)
+@@ -21,7 +21,6 @@
+ 
+ import jakarta.servlet.ServletContext;
+ import org.springframework.beans.factory.ObjectProvider;
+-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
+ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+ import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
+ import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
+@@ -34,10 +33,7 @@
+ import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
+ import org.springframework.boot.http.client.HttpClientSettings;
+ import org.springframework.boot.restclient.RestTemplateBuilder;
+-import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfiguration;
+-import org.springframework.boot.restclient.autoconfigure.RestTemplateAutoConfiguration;
+ import org.springframework.boot.web.server.autoconfigure.ServerProperties;
+-import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
+ import org.springframework.boot.webflux.autoconfigure.WebFluxProperties;
+ import org.springframework.boot.webmvc.autoconfigure.DispatcherServletAutoConfiguration;
+ import org.springframework.boot.webmvc.autoconfigure.DispatcherServletPath;
+@@ -70,8 +66,10 @@
+ @Configuration(proxyBeanMethods = false)
+ @ConditionalOnWebApplication
+ @Conditional(SpringBootAdminClientEnabledCondition.class)
+-@AutoConfigureAfter({ WebEndpointAutoConfiguration.class, RestClientAutoConfiguration.class,
+-		RestTemplateAutoConfiguration.class, WebClientAutoConfiguration.class })
++@AutoConfigureAfter(name = { "org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration",
++		"org.springframework.boot.restclient.autoconfigure.RestClientAutoConfiguration",
++		"org.springframework.boot.restclient.autoconfigure.RestTemplateAutoConfiguration",
++		"org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration" })
+ @EnableConfigurationProperties({ ClientProperties.class, InstanceProperties.class, ServerProperties.class,
+ 		ManagementServerProperties.class })
+ public class SpringBootAdminClientAutoConfiguration {
+Index: spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringNativeClientAutoConfiguration.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringNativeClientAutoConfiguration.java b/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringNativeClientAutoConfiguration.java
+--- a/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringNativeClientAutoConfiguration.java	(revision 40b5e022e464b2ba971fbed321ff1d9b87b3ca0e)
++++ b/spring-boot-admin-client/src/main/java/de/codecentric/boot/admin/client/config/SpringNativeClientAutoConfiguration.java	(revision 6baeab628d79aa939cc5c6a4e0950a6a9334b5e3)
+@@ -16,11 +16,8 @@
+ 
+ package de.codecentric.boot.admin.client.config;
+ 
+-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
+ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+-import org.springframework.boot.restclient.autoconfigure.RestTemplateAutoConfiguration;
+-import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
+ import org.springframework.context.annotation.Conditional;
+ import org.springframework.context.annotation.Configuration;
+ import org.springframework.context.annotation.ImportRuntimeHints;
+@@ -28,8 +25,9 @@
+ @Configuration(proxyBeanMethods = false)
+ @ConditionalOnWebApplication
+ @Conditional(SpringBootAdminClientEnabledCondition.class)
+-@AutoConfigureAfter({ WebEndpointAutoConfiguration.class, RestTemplateAutoConfiguration.class,
+-		WebClientAutoConfiguration.class })
++@AutoConfigureAfter(name = { "org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration",
++		"org.springframework.boot.restclient.autoconfigure.RestTemplateAutoConfiguration",
++		"org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration" })
+ @ImportRuntimeHints({ ClientRuntimeHints.class })
+ public class SpringNativeClientAutoConfiguration {
+ 
